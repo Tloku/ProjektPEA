@@ -5,11 +5,24 @@
 
 void loadFromFile();
 
-AdjacencyMatrix mat;
+AdjacencyMatrix mat = AdjacencyMatrix(4);
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	mat.addEdge(0, 1, 10);
+	mat.addEdge(0, 2, 15);
+	mat.addEdge(0, 3, 20);
+	mat.addEdge(1, 0, 10);
+	mat.addEdge(1, 2, 35);
+	mat.addEdge(1, 3, 25);
+	mat.addEdge(2, 0, 15);
+	mat.addEdge(2, 1, 35);
+	mat.addEdge(2, 3, 30);
+	mat.addEdge(3, 0, 20);
+	mat.addEdge(3, 1, 25);
+	mat.addEdge(3, 2, 30);
+
+	mat.TSPbruteForce();
 }
 
 void loadFromFile()
