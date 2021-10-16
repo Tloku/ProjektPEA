@@ -10,7 +10,7 @@ void PerformanceCounter::startCounter()
 	if (!QueryPerformanceFrequency(&li))
 		std::cout << "QueryPerformanceFrequency failed!\n";
 
-	PCfreq = double(li.QuadPart) / 1000000.0;
+	PCfreq = double(li.QuadPart) / 1000.0;
 
 	QueryPerformanceCounter(&li);
 	counterStart = li.QuadPart;
