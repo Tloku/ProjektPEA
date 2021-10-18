@@ -18,7 +18,7 @@ int main()
 void loadFromFile()
 {
 	std::fstream file;
-	std::string fileName = "tsp_13.txt";
+	std::string fileName = "tsp_6_1.txt";
 	int number_of_nodes = 0;
 	int weight;
 
