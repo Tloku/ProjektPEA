@@ -1,6 +1,5 @@
 #pragma once
 #include <algorithm>
-#include "Edge.h"
 #include "PerformanceCounter.h"
 #include <iostream>
 #include <vector>
