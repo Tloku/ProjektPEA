@@ -11,7 +11,6 @@ int main()
 {
 	loadFromFile();
 	mat.displayMatrix();
-	std::cout << "\a";
 	mat.TSPbruteForce();
 }
 
@@ -22,7 +21,7 @@ void loadFromFile()
 	int number_of_nodes = 0;
 	int weight;
 
-	std::cout << "\nWczytywanie z pliku.\n";
+	std::cout << "Wczytywanie z pliku.\n";
 
 	file.open(fileName, std::ios::in);
 	

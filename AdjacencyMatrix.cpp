@@ -94,11 +94,4 @@ void AdjacencyMatrix::TSPbruteForce()
 	for (int i : path)
 		std::cout << i << " - ";
 	std::cout << "0";
-	
-	for (int i= 1; i < 3; i++)
-	{
-		Sleep(500);
-		std::cout << "\a";
-	}
-	
 }
