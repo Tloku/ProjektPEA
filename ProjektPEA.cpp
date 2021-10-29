@@ -5,19 +5,25 @@
 
 void loadFromFile();
 
-AdjacencyMatrix mat = AdjacencyMatrix(4);
+AdjacencyMatrix mat = AdjacencyMatrix(5);
 
 int main()
 {
 	loadFromFile();
+	for (int i = 0; i < mat.x; i++)
+		for (int j = 0; j < mat.x; j++)
+			if (mat.V[i][j] == 0)
+				mat.V[i][j] = INT_MAX;
 	mat.displayMatrix();
-	mat.TSPbruteForce();
+	mat.minimalizeMatrix(mat.V);
+	mat.displayMatrix();
+	
 }
 
 void loadFromFile()
 {
 	std::fstream file;
-	std::string fileName = "tsp_6_1.txt";
+	std::string fileName = "abdul.txt";
 	int number_of_nodes = 0;
 	int weight;
 

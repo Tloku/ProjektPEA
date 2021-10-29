@@ -7,8 +7,6 @@ class PerformanceCounter
 	__int64 counterStart;
 
 public:
-
 	void startCounter();
 	double getCounter();
-
 };
