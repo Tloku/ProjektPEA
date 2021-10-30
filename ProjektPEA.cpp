@@ -5,7 +5,7 @@
 
 void loadFromFile();
 
-AdjacencyMatrix mat = AdjacencyMatrix(4);
+AdjacencyMatrix mat;
 
 int main()
 {
@@ -21,7 +21,7 @@ void loadFromFile()
 	int number_of_nodes = 0;
 	int weight;
 
-	std::cout << "Wczytywanie z pliku.\n";
+	//std::cout << "Wczytywanie z pliku.\n";
 
 	file.open(fileName, std::ios::in);
 	
@@ -29,7 +29,7 @@ void loadFromFile()
 		std::cout << "Nie udalo sie otworzyc pliku!\n";
 	}
 	else {
-		std::cout << "Udalo sie otworzyc plik!\n";
+		//std::cout << "Udalo sie otworzyc plik!\n";
 
 		file >> number_of_nodes;
 		mat = AdjacencyMatrix(number_of_nodes);

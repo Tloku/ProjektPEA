@@ -49,7 +49,6 @@ void AdjacencyMatrix::TSPbruteForce()
 		vertex.push_back(i);
 	
 	timer = 0.0;
-
 	counter.startCounter();
 	do{
 		iterations++;
