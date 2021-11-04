@@ -28,8 +28,9 @@ public:
 	void displayMatrix();
 	int minimalizeMatrix(int **V);
 	void TSPbruteForce();
-	void BranchAndBound();
+	void branchAndBound();
 	int findMin(int);
+	void printPath(std::vector<std::pair<int, int>> const&);
 	/*void rowReduction(int [], int);
 	void columnReduction(int [], int);
 	int calculateCost()*/;

@@ -15,8 +15,7 @@ int main()
 			if (mat.V[i][j] == 0)
 				mat.V[i][j] = INT_MAX;
 	mat.displayMatrix();
-	mat.minimalizeMatrix(mat.V);
-	mat.displayMatrix();
+	mat.branchAndBound();
 
 }
 

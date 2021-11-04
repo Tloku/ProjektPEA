@@ -1,4 +1,7 @@
 ﻿#include "AdjacencyMatrix.h"
+#include "Node.h"
+#include <queue>
+#include "Comparator.h"
 
 AdjacencyMatrix::AdjacencyMatrix() {}
 
@@ -131,6 +134,9 @@ int AdjacencyMatrix::minimalizeMatrix(int** V)
 	for (int i = 0; i < x; i++)
 		reducedCost += minRow[i] + minCol[i];
 
+
+	delete[] minRow;
+	delete[] minCol;
 	return reducedCost;
 }
 
@@ -142,6 +148,13 @@ int AdjacencyMatrix::findMin(int i)
 		if (V[i][j] < min && i != j)
 			min = V[i][j];
 	return j;
+}
+
+void AdjacencyMatrix::printPath(std::vector<std::pair<int, int>> const& path)
+{
+	for (int i = 0; i < path.size(); i++) {
+		std::cout << path[i].first + 1 << " —> " << path[i].second + 1 << "\n";
+	}
 }
 
 //void AdjacencyMatrix::rowReduction(int row[], int x)
@@ -199,23 +212,44 @@ int AdjacencyMatrix::findMin(int i)
 //}
 
 
-void AdjacencyMatrix::BranchAndBound()
+void AdjacencyMatrix::branchAndBound()
 {
-	/*memset(visited, 0, x);
-	visited[0] = true;
-	currentPath.push_back(0);
-	BranchAndBoundRec(1);*/
-
-	memset(visited, 0, x);
-	std::vector<int> searchTree;
-
-	minimalizeMatrix(V);
-	searchTree.push_back(0);
+	int result;
+	std::priority_queue<Node*, std::vector<Node*>, Comparator> searchTree;
+	std::vector<std::pair<int, int>> path;
+	Node *root = new Node;
+	root->newNode(V, x, path, 0, -1, 0);
+	root->cost = minimalizeMatrix(root->reducedMatrix);
+	searchTree.push(root);
 
 	while (!searchTree.empty())
 	{
-		int nextCity = findMin(0);
+		Node* minimumCostNode = searchTree.top();
 
+		searchTree.pop();
+
+		int i = minimumCostNode->vertex;
+
+		if (minimumCostNode->level == x - 1)
+		{
+			minimumCostNode->path.push_back(std::make_pair(i, 0));
+			printPath(minimumCostNode->path);
+			result = minimumCostNode->cost;
+		}
+		for (int j = 0; j < x; j++)
+		{
+			if (minimumCostNode->reducedMatrix[i][j] != INT_MAX)
+			{
+				Node* child = new Node;
+				child->newNode(minimumCostNode->reducedMatrix, x,
+					minimumCostNode->path, minimumCostNode->level + 1, i, j);
+
+				child->cost = minimumCostNode->cost + minimumCostNode->reducedMatrix[i][j] +
+					minimalizeMatrix(child->reducedMatrix);
+
+				searchTree.push(child);
+			}
+			delete minimumCostNode;
+		}
 	}
-
 }
