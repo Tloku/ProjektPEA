@@ -15,14 +15,15 @@ int main()
 			if (mat.V[i][j] == 0)
 				mat.V[i][j] = INT_MAX;
 	mat.displayMatrix();
-	mat.branchAndBound();
+	std::cout<<"Wynik = " << mat.branchAndBound();
+	//mat.startHeldKarp();
 
 }
 
 void loadFromFile()
 {
 	std::fstream file;
-	std::string fileName = "abdul.txt";
+	std::string fileName = "tsp_6_1.txt";
 	int number_of_nodes = 0;
 	int weight;
 

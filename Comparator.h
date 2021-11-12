@@ -1,8 +1,8 @@
 #pragma once
-#include "Node.h"
+#include "AdjacencyMatrix.h"
 
 struct Comparator {
-	bool operator()(const Node* left, const Node* right) const {
-		return left->cost > right->cost;
+	bool operator()(const AdjacencyMatrix* left, const AdjacencyMatrix* right) const {
+		return left->nodeCost > right->nodeCost;
 	}
 };

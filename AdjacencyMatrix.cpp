@@ -1,5 +1,4 @@
 ﻿#include "AdjacencyMatrix.h"
-#include "Node.h"
 #include <queue>
 #include "Comparator.h"
 
@@ -15,12 +14,59 @@ AdjacencyMatrix::AdjacencyMatrix(int x)
 	currentWeight = 0;
 	currentBound = 0;
 
-	for (int i = 0; i < x; i++)
+	for (int i = 0; i < x; i++) 
 		V[i] = new int[x];
 
 	for (int i = 0; i < x; i++)
 		for (int j = 0; j < x; j++)
 			V[i][j] = 0;
+}
+
+
+int** AdjacencyMatrix::initNodeMatrix(int** nodeReducedMatrix)
+{
+	nodeReducedMatrix = new int* [x];
+	for (int i = 0; i < x; i++)
+		nodeReducedMatrix[i] = new int[x];
+	return nodeReducedMatrix;
+}
+
+AdjacencyMatrix* AdjacencyMatrix::newNode(int **parentMatrix, std::vector<std::pair<int, int>> const& path, int level, int i, int j)
+{
+	AdjacencyMatrix* node = new AdjacencyMatrix;
+	node->nodeReducedMatrix = initNodeMatrix(node->nodeReducedMatrix);
+	node->nodePath = path;
+
+	if (level == 0) 
+		node->nodePath.push_back(std::make_pair(i, j));
+	
+	memcpy(node->nodeReducedMatrix, parentMatrix, sizeof(parentMatrix));
+
+	for (int k = 0; k < x && level != 0; k++){
+		node->nodeReducedMatrix[i][k] = INT_MAX;
+		node->nodeReducedMatrix[k][j] = INT_MAX;
+	}
+
+	node->nodeReducedMatrix[j][0] = INT_MAX;
+	node->nodeLevel = level;
+	node->nodeVertex = j;
+
+	return node;
+}
+
+AdjacencyMatrix* AdjacencyMatrix::newMinNode(int** parentMatrix, std::vector<std::pair<int, int>> const& path, int level, int j)
+{
+	AdjacencyMatrix* node = new AdjacencyMatrix;
+	node->nodeReducedMatrix = initNodeMatrix(node->nodeReducedMatrix);
+	node->nodePath = path;
+
+	memcpy(node->nodeReducedMatrix, parentMatrix, sizeof(parentMatrix));
+
+	node->nodeReducedMatrix[j][0] = INT_MAX;
+	node->nodeLevel = level;
+	node->nodeVertex = j;
+
+	return node;
 }
 
 void AdjacencyMatrix::addEdge(int i, int j, int weight)
@@ -132,7 +178,8 @@ int AdjacencyMatrix::minimalizeMatrix(int** V)
 				V[i][j] -= minCol[j];
 
 	for (int i = 0; i < x; i++)
-		reducedCost += minRow[i] + minCol[i];
+		if(minRow[i] != INT_MAX && minCol[i] != INT_MAX)
+			reducedCost += minRow[i] + minCol[i];
 
 
 	delete[] minRow;
@@ -153,7 +200,7 @@ int AdjacencyMatrix::findMin(int i)
 void AdjacencyMatrix::printPath(std::vector<std::pair<int, int>> const& path)
 {
 	for (int i = 0; i < path.size(); i++) {
-		std::cout << path[i].first + 1 << " —> " << path[i].second + 1 << "\n";
+		std::cout << path[i].first + 1 << " -> " << path[i].second + 1 << "\n";
 	}
 }
 
@@ -212,44 +259,72 @@ void AdjacencyMatrix::printPath(std::vector<std::pair<int, int>> const& path)
 //}
 
 
-void AdjacencyMatrix::branchAndBound()
+int AdjacencyMatrix::branchAndBound()
 {
 	int result;
-	std::priority_queue<Node*, std::vector<Node*>, Comparator> searchTree;
+	std::priority_queue<AdjacencyMatrix*, std::vector<AdjacencyMatrix*>, Comparator> searchTree;
 	std::vector<std::pair<int, int>> path;
-	Node *root = new Node;
-	root->newNode(V, x, path, 0, -1, 0);
-	root->cost = minimalizeMatrix(root->reducedMatrix);
+	AdjacencyMatrix *root = newNode(V, path, 0, -1, 0);
+	root->nodeCost = minimalizeMatrix(root->nodeReducedMatrix);
 	searchTree.push(root);
 
 	while (!searchTree.empty())
 	{
-		Node* minimumCostNode = searchTree.top();
-
+		AdjacencyMatrix* minimumCostNode = searchTree.top();
 		searchTree.pop();
-
-		int i = minimumCostNode->vertex;
-
-		if (minimumCostNode->level == x - 1)
+		int i = minimumCostNode->nodeVertex;
+		
+		if (minimumCostNode->nodeLevel == x - 1)
 		{
-			minimumCostNode->path.push_back(std::make_pair(i, 0));
-			printPath(minimumCostNode->path);
-			result = minimumCostNode->cost;
+			minimumCostNode->nodePath.push_back(std::make_pair(i, 0));
+			printPath(minimumCostNode->nodePath);
+			result = minimumCostNode->nodeCost;
+
+			return minimumCostNode->nodeCost;
 		}
 		for (int j = 0; j < x; j++)
 		{
-			if (minimumCostNode->reducedMatrix[i][j] != INT_MAX)
+			if (minimumCostNode->nodeReducedMatrix[i][j] != INT_MAX)
 			{
-				Node* child = new Node;
-				child->newNode(minimumCostNode->reducedMatrix, x,
-					minimumCostNode->path, minimumCostNode->level + 1, i, j);
+				AdjacencyMatrix* child = newNode(minimumCostNode->nodeReducedMatrix,
+					minimumCostNode->nodePath, (minimumCostNode->nodeLevel + 1), i, j);
 
-				child->cost = minimumCostNode->cost + minimumCostNode->reducedMatrix[i][j] +
-					minimalizeMatrix(child->reducedMatrix);
+				child->nodeCost = minimumCostNode->nodeCost + minimumCostNode->nodeReducedMatrix[i][j] +
+					minimalizeMatrix(child->nodeReducedMatrix);
 
 				searchTree.push(child);
 			}
-			delete minimumCostNode;
 		}
+		delete minimumCostNode;
 	}
+}
+
+int AdjacencyMatrix::heldKarp(int** cities, int pos, int visited, std::vector<std::vector<int>>& state)
+{
+	if (visited == ((1 << x) - 1)) //jeśli bit 1 znajduje się na n-1 miejscu
+		return cities[pos][0];		//wróć do miasta początkowego
+
+	if (state[pos][visited] != INT_MAX)
+		return state[pos][visited];
+
+	for (int i = 0; i < x; i++)
+	{
+		if (i == pos || (visited & (1 << i)))
+			continue; //jeśli i wskazuje na miejsce, w którym już byliśmy to pomijamy te iteracje pętli
+
+		int distance = cities[pos][i] + heldKarp(cities, i, visited | (1 << i), state);
+		if (distance < state[pos][visited])
+			state[pos][visited] = distance;
+	}
+	return state[pos][visited];
+}
+
+void AdjacencyMatrix::startHeldKarp()
+{
+	std::vector<std::vector<int>> state(x);
+
+	for (auto& neighbors : state)
+		neighbors = std::vector<int>((1 << x) - 1, INT_MAX);
+
+	std::cout << "Minimum: " << heldKarp(V, 0, 1, state);
 }
