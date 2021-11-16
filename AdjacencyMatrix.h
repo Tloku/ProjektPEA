@@ -22,14 +22,15 @@ public:
 	int currentWeight;
 	int currentBound;
 
-	std::vector<std::pair<int, int>> nodePath;
+	std::vector<int> nodePath;
 	int **nodeReducedMatrix;
 	int nodeCost;
 	int nodeVertex;
 	int nodeLevel;
+	int* minRow;
+	int* minCol;
 	int** initNodeMatrix(int** nodeReducedMatrix);
-	AdjacencyMatrix* newNode(int **, std::vector<std::pair<int, int>> const& , int , int, int);
-	AdjacencyMatrix* newMinNode(int** parentMatrix, std::vector<std::pair<int, int>> const& path, int level, int j);
+	AdjacencyMatrix* newNode(int **, std::vector<int> const& , int , int, int);
 	
 	AdjacencyMatrix(int);
 	AdjacencyMatrix();
@@ -38,12 +39,8 @@ public:
 	int minimalizeMatrix(int **V);
 	void TSPbruteForce();
 	int branchAndBound();
-	int findMin(int);
-	void printPath(std::vector<std::pair<int, int>> const&);
+	void printPath(std::vector<int> const&);
 	int heldKarp(int**, int, int, std::vector<std::vector<int>>&);
-	void startHeldKarp();
-	/*void rowReduction(int [], int);
-	void columnReduction(int [], int);
-	int calculateCost()*/;
+	int startHeldKarp();
 };
 
